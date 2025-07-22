@@ -69,10 +69,8 @@
   &::-webkit-scrollbar {
     display: none;
   }
-  cursor: grab;
 }
 .menu_food__category.dragging {
-  cursor: grabbing;
   user-select: none;
 }
 
@@ -86,7 +84,6 @@
   cursor: pointer;
 }
 .menu_food__category.dragging .menu_food__category-item {
-  cursor: grabbing;
 }
 
 .menu_food__category-item:hover {
@@ -135,7 +132,6 @@
   transition: background 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(64, 64, 64, 0.06);
 }
-
 
 .menu_food__item-img {
   width: 100%;
