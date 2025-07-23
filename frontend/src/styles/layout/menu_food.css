@@ -83,8 +83,6 @@
   padding: 14px;
   cursor: pointer;
 }
-.menu_food__category.dragging .menu_food__category-item {
-}
 
 .menu_food__category-item:hover {
   background-color: #404040;

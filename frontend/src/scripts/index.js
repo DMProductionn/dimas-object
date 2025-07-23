@@ -7,6 +7,23 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import axios from 'axios';
 
+// Глобальный кэш изображений
+window.menuFoodImageCache = {};
+
+function preloadMenuFoodImages() {
+  if (!window.menuFoodPositionsByCategory) return;
+  const allImages = window.menuFoodPositionsByCategory.flatMap((cat) =>
+    cat.positions.map((pos) => pos.img),
+  );
+  allImages.forEach((src) => {
+    if (!window.menuFoodImageCache[src]) {
+      const img = new window.Image();
+      img.src = src;
+      window.menuFoodImageCache[src] = img;
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setYear();
   initForm();
@@ -45,15 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Предзагрузка всех food и breakfast изображений в кэш
+  preloadMenuFoodImages();
   const category = document.querySelector('.menu_food__category');
   if (category) {
     category.addEventListener(
       'wheel',
       function (e) {
         if (category.scrollWidth > category.clientWidth) {
-          if (e.deltaY !== 0 && !e.shiftKey) {
+          if (e.deltaY !== 0) {
             e.preventDefault();
-            category.scrollLeft += e.deltaY * 0.7;
+            category.scrollLeft += e.deltaY;
           }
         }
       },
