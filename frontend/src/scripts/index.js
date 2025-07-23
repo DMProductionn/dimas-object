@@ -9,14 +9,8 @@ import axios from 'axios';
 import {
   preloadAllMenuImages,
   renderMenuFoodCategories,
-  renderMenuFoodPositions,
 } from './menuFood.js';
 
-
-function hideLoader() {
-  const loader = document.getElementById('loader');
-  if (loader) loader.style.display = 'none';
-}
 
 // Глобальный кэш изображений
 window.menuFoodImageCache = {};
@@ -36,16 +30,27 @@ function preloadMenuFoodImages() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  showLoader();
   try {
     await preloadAllMenuImages();
   } catch (e) {
-    // даже если ошибка, продолжаем
     console.error('Ошибка загрузки изображений меню:', e);
   }
-  hideLoader();
   renderMenuFoodCategories();
-  renderMenuFoodPositions();
+  const category = document.querySelector('.menu_food__category');
+  if (category) {
+    category.addEventListener(
+      'wheel',
+      function (e) {
+        if (category.scrollWidth > category.clientWidth) {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            category.scrollLeft += e.deltaY;
+          }
+        }
+      },
+      { passive: false },
+    );
+  }
   setYear();
   initForm();
   initModal();
@@ -55,7 +60,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMenu();
 
   const form = document.getElementById('form');
-
   form.addEventListener('submit', function (event) {
     event.preventDefault();
   });
@@ -85,21 +89,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.addEventListener('DOMContentLoaded', function () {
   // Предзагрузка всех food и breakfast изображений в кэш
   preloadMenuFoodImages();
-  const category = document.querySelector('.menu_food__category');
-  if (category) {
-    category.addEventListener(
-      'wheel',
-      function (e) {
-        if (category.scrollWidth > category.clientWidth) {
-          if (e.deltaY !== 0) {
-            e.preventDefault();
-            category.scrollLeft += e.deltaY;
-          }
-        }
-      },
-      { passive: false },
-    );
-  }
 });
 
 const initMenu = () => {
