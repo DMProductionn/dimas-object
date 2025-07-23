@@ -672,6 +672,23 @@ export const menuFoodPositionsByCategory = [
           { title: 'Сок яблочный', weight: '250 мл', price: '240 ₽' },
           { title: 'Сок томатный', weight: '250 мл', price: '240 ₽' },
           { title: 'Ред булл', weight: '330 мл', price: '340 ₽' },
+          { title: 'Байкал', weight: '300 мл', price: '300 ₽' },
+          { title: 'Тархун', weight: '300 мл', price: '300 ₽' },
+          { title: 'Дюшес', weight: '300 мл', price: '300 ₽' },
+        ],
+      },
+      {
+        type: 'subcategory',
+        title: 'НАСТОЙКИ',
+        items: [
+          { title: 'Луговая', weight: '50 мл', price: '320 ₽' },
+          { title: 'Лимончелло', weight: '50 мл', price: '320 ₽' },
+          { title: 'Черничная', weight: '50 мл', price: '260 ₽' },
+          { title: 'Вишня-Лаванда', weight: '50 мл', price: '320 ₽' },
+          { title: 'Краковская', weight: '50 мл', price: '690 ₽' },
+          { title: 'Брусничная', weight: '50 мл', price: '320 ₽' },
+          { title: 'Ирис', weight: '50 мл', price: '320 ₽' },
+          { title: 'Шарлотка', weight: '50 мл', price: '320 ₽' },
         ],
       },
       {
