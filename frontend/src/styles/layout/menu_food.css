@@ -180,3 +180,8 @@
   letter-spacing: -2%;
   color: var(--gray-black);
 }
+
+.menu_food__category-item,
+.menu_food__item {
+  will-change: background, color, box-shadow, transform;
+}

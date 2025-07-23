@@ -413,39 +413,48 @@ export const menuFoodPositionsByCategory = [
   },
 ];
 
-// Функция рендера блюд для конкретной категории
-export function renderMenuFoodPositions(categoryTitle) {
+// Сохраняем текущую категорию и список позиций для оптимизации рендера
+let lastRenderedCategory = null;
+let lastRenderedPositions = [];
+
+// Рендерим все карточки всех категорий один раз
+export function renderAllMenuFoodPositions() {
   const wrapper = document.querySelector('.menu_food__wrapper.food');
   if (!wrapper) return;
 
-  const categoryToRender =
-    menuFoodPositionsByCategory.find((cat) => cat.category === categoryTitle) ||
-    menuFoodPositionsByCategory[0];
-
-  if (!categoryToRender) {
-    wrapper.innerHTML = '<p>Блюда не найдены.</p>';
-    return;
-  }
-
-  wrapper.innerHTML = categoryToRender.positions
-    .map((pos) => {
-      // Используем кэшированное изображение, если оно есть
-      const cachedImg =
-        window.menuFoodImageCache && window.menuFoodImageCache[pos.img]
-          ? window.menuFoodImageCache[pos.img].src
-          : pos.img;
-      return `
-        <div class="menu_food__item">
-          <img class="menu_food__item-img" src="${cachedImg}" alt="${pos.title}" />
-          <p class="menu_food__item-title">${pos.title}</p>
-          <p class="menu_food__item-weight">${pos.weight}</p>
-          <div class="menu_food__item-price">
-            <p class="menu_food__item-price-text">${pos.price}</p>
+  wrapper.innerHTML = menuFoodPositionsByCategory
+    .map((cat) =>
+      cat.positions
+        .map(
+          (pos) => `
+          <div class="menu_food__item menu_food__item--${cat.category.replace(
+            /\s/g,
+            '_',
+          )}" data-category="${cat.category}" style="display: none;">
+            <img class="menu_food__item-img" src="${pos.img}" alt="${pos.title}" loading="lazy" />
+            <p class="menu_food__item-title">${pos.title}</p>
+            <p class="menu_food__item-weight">${pos.weight}</p>
+            <div class="menu_food__item-price">
+              <p class="menu_food__item-price-text">${pos.price}</p>
+            </div>
           </div>
-        </div>
-      `;
-    })
+        `,
+        )
+        .join(''),
+    )
     .join('');
+}
+
+// Показываем только нужную категорию
+export function showMenuCategory(categoryTitle) {
+  const allItems = document.querySelectorAll('.menu_food__item');
+  allItems.forEach((item) => {
+    if (item.dataset.category === categoryTitle) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
 }
 
 // Функция рендера категорий и добавления обработчиков кликов
@@ -457,7 +466,7 @@ export function renderMenuFoodCategories() {
     .map(
       (category) => `
     <div class="menu_food__category-item" data-category="${category.title}">
-      <img class="menu_food__category-img" src="${category.img}" alt="${category.title}" />
+      <img class="menu_food__category-img" src="${category.img}" alt="${category.title}" loading="lazy" />
       <p class="menu_food__category-title">${category.title}</p>
     </div>
   `,
@@ -475,12 +484,30 @@ export function renderMenuFoodCategories() {
       categoryItems.forEach((i) => i.classList.remove('active'));
       item.classList.add('active');
       const categoryTitle = item.dataset.category;
-      renderMenuFoodPositions(categoryTitle);
+      showMenuCategory(categoryTitle);
     });
   });
 }
 
+// Асинхронная предзагрузка всех изображений меню
+export function preloadAllMenuImages() {
+  const allImages = menuFoodPositionsByCategory.flatMap((cat) =>
+    cat.positions.map((pos) => pos.img),
+  );
+  return Promise.all(
+    allImages.map(
+      (src) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = resolve;
+          img.onerror = reject;
+        }),
+    ),
+  );
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   renderMenuFoodCategories();
-  renderMenuFoodPositions(); // Рендерим блюда первой категории по умолчанию
+  renderAllMenuFoodPositions(); // Рендерим все карточки всех категорий один раз
 });

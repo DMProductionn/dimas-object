@@ -6,6 +6,17 @@ import 'swiper/css/autoplay';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import axios from 'axios';
+import {
+  preloadAllMenuImages,
+  renderMenuFoodCategories,
+  renderMenuFoodPositions,
+} from './menuFood.js';
+
+
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  if (loader) loader.style.display = 'none';
+}
 
 // Глобальный кэш изображений
 window.menuFoodImageCache = {};
@@ -24,7 +35,17 @@ function preloadMenuFoodImages() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  showLoader();
+  try {
+    await preloadAllMenuImages();
+  } catch (e) {
+    // даже если ошибка, продолжаем
+    console.error('Ошибка загрузки изображений меню:', e);
+  }
+  hideLoader();
+  renderMenuFoodCategories();
+  renderMenuFoodPositions();
   setYear();
   initForm();
   initModal();
